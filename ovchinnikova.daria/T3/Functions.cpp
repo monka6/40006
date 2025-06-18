@@ -80,10 +80,10 @@ double areaMean(std::vector<Polygon>& data) {
     return total / data.size();
 }
 
-double areaNumOfVertexes(int arg, std::vector<Polygon>& data) {
+double areaNumOfVertexes(size_t arg, std::vector<Polygon>& data) {
     return std::accumulate(data.begin(), data.end(), 0.0,
         [arg](double sum, Polygon& poly) {
-            return (poly.points.size() == arg) ? sum + computeArea(poly.points) : sum;
+            return (poly.points.size() == static_cast<size_t>(arg)) ? sum + computeArea(poly.points) : sum;
         });
 }
 
@@ -119,7 +119,7 @@ int countEvenOdd(std::string arg, std::vector<Polygon>& data) {
         });
 }
 
-int countVertexes(int arg, std::vector<Polygon>& data) {
+int countVertexes(size_t arg, std::vector<Polygon>& data) {
     return std::count_if(data.begin(), data.end(),
         [arg](Polygon& poly) {
             return poly.points.size() == arg;
