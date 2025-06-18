@@ -8,7 +8,8 @@
 
 std::istream& operator>>(std::istream& in, Point& point) {
     char ch1 = 0, ch2 = 0, ch3 = 0;
-    point{ 0,0 };
+    point.x = 0;
+    point.y = 0;
     in >> ch1 >> point.x >> ch2 >> point.y >> ch3;
     if (ch1 != '(' || ch2 != ';' || ch3 != ')') {
         in.setstate(std::ios::failbit);
@@ -29,7 +30,7 @@ std::istream& operator>>(std::istream& in, Polygon& polygon) {
             in.setstate(std::ios::failbit);
             return in;
         }
-        Point point{0, 0};
+        Point point{ 0, 0};
         if (!(in >> point)) {
             return in;
         }
