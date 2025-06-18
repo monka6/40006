@@ -99,7 +99,7 @@ double maxAreaVertexes(std::string& arg, std::vector<Polygon>& data) {
     }
     else if (arg == "VERTEXES") {
         auto total = std::max_element(data.begin(), data.end(), VertexCountComparator());
-        return static_cast<int>(total->points.size());
+        return total->points.size();
     }
     return 0.0;
 }
@@ -114,7 +114,7 @@ double minAreaVertexes(std::string& arg, std::vector<Polygon>& data) {
     }
     else if (arg == "VERTEXES") {
         auto total = std::min_element(data.begin(), data.end(), VertexCountComparator());
-        return static_cast<int>(total->points.size());
+        return total->points.size();
     }
     return 0.0;
 }

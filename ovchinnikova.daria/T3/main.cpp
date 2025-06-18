@@ -79,11 +79,17 @@ int main(int argc, char* argv[]) {
                 invalidCommand();
                 continue;
             }
-            if (arg == "AREA" || arg == "VERTEXES") {
-                double result = (command == "MAX")
-                    ? maxAreaVertexes(arg, polygons)
-                    : minAreaVertexes(arg, polygons);
-                std::cout << (arg == "VERTEXES" ? static_cast<int>(result) : result) << '\n';
+            if (command == "MAX" && arg == "AREA") {
+                std::cout << maxAreaVertexes(arg, polygons) << '\n';
+            }
+            else if (command == "MAX" && arg == "VERTEXES") {
+                std::cout << static_cast<int>(maxAreaVertexes(arg, polygons)) << '\n';
+            }
+            else if (command == "MIN" && arg == "AREA") {
+                std::cout << minAreaVertexes(arg, polygons) << '\n';
+            }
+            else if (command == "MIN" && arg == "VERTEXES") {
+                std::cout << static_cast<int>(minAreaVertexes(arg, polygons)) << '\n';
             }
             else {
                 invalidCommand();
