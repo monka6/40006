@@ -19,7 +19,7 @@ std::istream& operator>>(std::istream& in, Point& point) {
 
 std::istream& operator>>(std::istream& in, Polygon& polygon) {
     polygon.points.clear();
-    int count;
+    int count = 0;
     if (!(in >> count) || (count < 3)) {
         in.setstate(std::ios::failbit);
         return in;
@@ -30,7 +30,7 @@ std::istream& operator>>(std::istream& in, Polygon& polygon) {
             in.setstate(std::ios::failbit);
             return in;
         }
-        Point point;
+        Point point{ 0, 0 };
         if (!(in >> point)) {
             return in;
         }
@@ -155,29 +155,32 @@ int countRects(std::vector<Polygon>& data) {
     return std::count_if(data.begin(), data.end(), isRect);
 }
 
-int orientation(const Point& a, const Point& b, const Point& point) {
-    int pos = (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x);
-    if (pos == 0) {
+int orientation(const Point& p, const Point& q, const Point& r) {
+    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    if (val == 0) {
         return 0;
     }
-    return (pos > 0) ? -1 : 1;
+    return (val > 0) ? 1 : 2;
 }
 
-bool pointOnSegment(const Point& a, const Point& b, const Point& point) {
-    return b.x >= std::min(a.x, point.x) && b.x <= std::max(a.x, point.x)
-        && b.y >= std::min(a.y, point.y) && b.y <= std::max(a.y, point.y);
+bool pointOnSegment(const Point& p, const Point& q, const Point& r) {
+    if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+        q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y)) {
+        return true;
+    }
+    return false;
 }
 
-bool intersectionOfSeg(const Point& a1, const Point& b1, const Point& a2, const Point& b2) {
-    int orient1 = orientation(a1, b1, a2);
-    int orient2 = orientation(a1, b1, b2);
-    int orient3 = orientation(a2, b2, a1);
-    int orient4 = orientation(a2, b2, b1);
+bool intersectionOfSeg(const Point& a1, const Point& a2, const Point& b1, const Point& b2) {
+    int orient1 = orientation(a1, a2, b1);
+    int orient2 = orientation(a1, a2, b2);
+    int orient3 = orientation(b1, b2, a1);
+    int orient4 = orientation(b1, b2, a2);
     if (orient1 * orient2 < 0 && orient3 * orient4 < 0) {
         return true;
     }
-    else if ((orient1 == 0 && pointOnSegment(a1, a2, b1)) || (orient2 == 0 && pointOnSegment(a1, b2, b1)) ||
-        (orient3 == 0 && pointOnSegment(a2, a1, b2)) || (orient4 == 0 && pointOnSegment(a2, b1, b2))) {
+    else if ((orient1 == 0 && pointOnSegment(a1, b1, a2)) || (orient2 == 0 && pointOnSegment(a1, b2, a2)) ||
+        (orient3 == 0 && pointOnSegment(b1, a1, b2)) || (orient4 == 0 && pointOnSegment(b1, a2, b2))) {
         return true;
     }
     else {
@@ -188,12 +191,12 @@ bool intersectionOfSeg(const Point& a1, const Point& b1, const Point& a2, const 
 bool pointInPolygon(const Point& point, const Polygon& polygon) {
     bool isInside = false;
     const auto& points = polygon.points;
-    int vertexes = points.size();
-    if (vertexes < 3) {
+    int n = points.size();
+    if (n < 3) {
         return false;
     }
 
-    for (int i = 0, j = vertexes - 1; i < vertexes; j = i++) {
+    for (int i = 0, j = n - 1; i < n; j = i++) {
         if (((points[i].y > point.y) != (points[j].y > point.y)) &&
             (point.x < (points[j].x - points[i].x) * (point.y - points[i].y)
                 / (points[j].y - points[i].y) + points[i].x)) {
@@ -231,12 +234,17 @@ bool polygonsIntersect(const Polygon& a, const Polygon& b) {
     return false;
 }
 
-int countIntersectingPolygons(const std::vector<Polygon>& polygons,
-    const Polygon& target) {
-    return std::count_if(polygons.begin(), polygons.end(),
-        [&target](const Polygon& poly) {
-            return polygonsIntersect(poly, target);
-        });
+int countIntersectingPolygons(const std::vector<Polygon>& polygons, const Polygon& target) {
+    int count = 0;
+    for (const auto& poly : polygons) {
+        if (&poly == &target) {
+            continue;
+        }
+        if (polygonsIntersect(poly, target)) {
+            count++;
+        }
+    }
+    return count;
 }
 
 
