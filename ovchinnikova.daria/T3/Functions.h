@@ -29,3 +29,4 @@ int countIntersectingPolygons(const std::vector<Polygon>& a, const Polygon& b);
 
 
 #endif
+
