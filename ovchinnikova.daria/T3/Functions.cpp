@@ -8,6 +8,8 @@
 
 std::istream& operator>>(std::istream& in, Point& point) {
     char ch1, ch2, ch3;
+    point.x = 0; 
+    point.y = 0; 
     in >> ch1 >> point.x >> ch2 >> point.y >> ch3;
     if (ch1 != '(' || ch2 != ';' || ch3 != ')') {
         in.setstate(std::ios::failbit);
@@ -88,25 +90,31 @@ double areaNumOfVertexes(size_t arg, std::vector<Polygon>& data) {
 }
 
 double maxAreaVertexes(std::string& arg, std::vector<Polygon>& data) {
+    if (data.empty()) {
+        return 0.0;
+    }
     if (arg == "AREA") {
         auto total = std::max_element(data.begin(), data.end(), AreaComparator());
         return computeArea(total->points);
     }
     else if (arg == "VERTEXES") {
         auto total = std::max_element(data.begin(), data.end(), VertexCountComparator());
-        return total->points.size();
+        return static_cast<double>(total->points.size());
     }
     return 0.0;
 }
 
 double minAreaVertexes(std::string& arg, std::vector<Polygon>& data) {
+    if (data.empty()) {
+        return 0.0;
+    }
     if (arg == "AREA") {
         auto total = std::min_element(data.begin(), data.end(), AreaComparator());
         return computeArea(total->points);
     }
     else if (arg == "VERTEXES") {
         auto total = std::min_element(data.begin(), data.end(), VertexCountComparator());
-        return total->points.size();
+        return static_cast<double>(total->points.size());
     }
     return 0.0;
 }
