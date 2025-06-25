@@ -235,16 +235,10 @@ bool polygonsIntersect(const Polygon& a, const Polygon& b) {
 }
 
 int countIntersectingPolygons(const std::vector<Polygon>& polygons, const Polygon& target) {
-    int count = 0;
-    for (const auto& poly : polygons) {
-        if (&poly == &target) {
-            continue;
-        }
-        if (polygonsIntersect(poly, target)) {
-            count++;
-        }
-    }
-    return count;
+    return std::count_if(polygons.begin(), polygons.end(),
+        [&target](const Polygon& poly) {
+            return &poly != &target && polygonsIntersect(poly, target);
+        });
 }
 
 
